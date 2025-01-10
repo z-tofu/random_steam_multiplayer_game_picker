@@ -2,15 +2,18 @@
 import requests
 import json
 import random
+from dotenv import load_dotenv
 import os
 
+# Loading the .env file with keys and user_ids
+load_dotenv()
+
 # Steam API KEY
-API_KEY = ''
+API_KEY = os.getenv("API_KEY")
 
 # List of Steam64 IDs of the players
-STEAM_IDS = [
-    ""
-]
+steam_ids_raw = os.getenv("STEAM_IDS")
+STEAM_IDS = steam_ids_raw.split(",") if steam_ids_raw else []
 # Cache file for storing common multiplayer games
 CACHE_FILE = "common_multiplayer_games.json"
 
@@ -35,10 +38,11 @@ def get_owned_games(steam_id):
 def is_multiplayer(game_id):
     url = f"https://store.steampowered.com/api/appdetails?appids={game_id}"
     response = requests.get(url)
+    keywords = ["Multiplayer", "Multi-player", "Online pvp", "Online Co-op"]
     if response.status_code == 200:
         data = response.json().get(str(game_id), {}).get("data", {})
         categories = data.get("categories", [])
-        return any("Multiplayer" in category["description"] for category in categories)
+        return any(keyword in category["description"] for keyword in keywords for category in categories)
     return False
 
 
