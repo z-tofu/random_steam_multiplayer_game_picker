@@ -14,6 +14,7 @@ API_KEY = os.getenv("API_KEY")
 # List of Steam64 IDs of the players
 steam_ids_raw = os.getenv("STEAM_IDS")
 STEAM_IDS = steam_ids_raw.split(",") if steam_ids_raw else []
+
 # Cache file for storing common multiplayer games
 CACHE_FILE = "common_multiplayer_games.json"
 
@@ -66,7 +67,7 @@ def find_and_cache_common_multiplayer_games(steam_ids):
 
     # Save to cache
     with open(CACHE_FILE, "w") as f:
-        json.dump(multiplayer_games, f)
+        json.dump(multiplayer_games, f) # type: ignore
 
     return multiplayer_games
 
@@ -93,8 +94,8 @@ def select_random_game(steam_ids):
 
     # Select a random multiplayer game
     if multiplayer_games:
-        selected_game = random.choice(multiplayer_games)
-        return selected_game
+        select_game = random.choice(multiplayer_games)
+        return select_game
     else:
         return None
 
