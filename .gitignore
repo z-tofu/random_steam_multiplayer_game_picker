@@ -1,19 +1,7 @@
-# Ignore environment files where API keys might be stored
 .env
 .env.local
 *.env
-
-# Ignore JSON or text files that may contain sensitive keys
-apikeys.json
-apikeys.txt
 common_multiplayer_games.json
-# Ignore specific files where you store Steam IDs or API keys
-steam_ids.txt
-steam_ids.json
 
-# Ignore any file with "keys" or "ids" in its name
 *keys*
 *ids*
-
-# Optionally, ignore specific Python files if API keys or Steam IDs are hardcoded
-secret_config.py
