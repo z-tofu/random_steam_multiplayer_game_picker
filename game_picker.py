@@ -8,8 +8,13 @@ import os
 # Loading the .env file with keys and user_ids
 load_dotenv()
 
+# Tenor API KEY
+TENOR_API_KEY = os.getenv("TENOR_API_KEY")
+
+TENOR_CKEY = os.getenv("TENOR_CKEY")
+
 # Steam API KEY
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("STEAM_API_KEY")
 
 # List of Steam64 IDs of the players
 steam_ids_raw = os.getenv("STEAM_IDS")
@@ -100,10 +105,32 @@ def select_random_game(steam_ids):
         return None
 
 
+def tenor_gif_for_game(x):
+    # set the apikey and limit
+    apikey = TENOR_API_KEY  # click to set to your apikey
+    lmt = 1
+    ckey = TENOR_CKEY  # set the client_key for the integration and use the same value for all API calls
+
+    # our test search
+    search_term = f"hop on {x}"
+
+    # get the top 8 GIFs for the search term
+    r = requests.get(
+        "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s" % (search_term, apikey, ckey, lmt))
+
+    if r.status_code == 200:
+        # load the GIFs using the urls for the smaller GIF sizes
+        top_gifs = json.loads(r.content)
+        print(top_gifs)
+    else:
+        top_gifs = None
+
+
 # Run
 selected_game = select_random_game(STEAM_IDS)
 if selected_game:
     print(
         f"Selected multiplayer game: {selected_game['name']} - https://store.steampowered.com/app/{selected_game['appid']}")
+    tenor_gif_for_game(selected_game["name"])
 else:
     print("No common multiplayer game found!")
