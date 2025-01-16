@@ -11,6 +11,7 @@ load_dotenv()
 # Tenor API KEY
 TENOR_API_KEY = os.getenv("TENOR_API_KEY")
 
+# Tenor client key
 TENOR_CKEY = os.getenv("TENOR_CKEY")
 
 # Steam API KEY
@@ -105,14 +106,14 @@ def select_random_game(steam_ids):
         return None
 
 
-def tenor_gif_for_game(x):
+def tenor_gif_for_game(game_name):
     # set the apikey and limit
     apikey = TENOR_API_KEY  # click to set to your apikey
     lmt = 1
     ckey = TENOR_CKEY  # set the client_key for the integration and use the same value for all API calls
 
     # our test search
-    search_term = f"hop on {x}"
+    search_term = f"hop on {game_name}"
 
     # get the top 8 GIFs for the search term
     r = requests.get(
