@@ -120,11 +120,17 @@ def tenor_gif_for_game(game_name):
         "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s" % (search_term, apikey, ckey, lmt))
 
     if r.status_code == 200:
-        # load the GIFs using the urls for the smaller GIF sizes
+        # load the GIFs using the URLs for the smaller GIF sizes
         top_gifs = json.loads(r.content)
-        print(top_gifs)
+
+        # Extract and print the 'gif' URL
+        if "results" in top_gifs and len(top_gifs["results"]) > 0:
+            gif_url = top_gifs["results"][0]["media_formats"]["gif"]["url"]
+            print(gif_url)
+        else:
+            print("No results found.")
     else:
-        top_gifs = None
+        print("Failed to fetch GIFs.")
 
 
 # Run
