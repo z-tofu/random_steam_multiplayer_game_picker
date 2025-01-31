@@ -115,7 +115,7 @@ def tenor_gif_for_game(game_name):
     # our test search
     search_term = f"hop on {game_name}"
 
-    # get the top 8 GIFs for the search term
+    # get the top GIF for the search term
     r = requests.get(
         "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s" % (search_term, apikey, ckey, lmt))
 
