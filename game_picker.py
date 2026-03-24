@@ -1,31 +1,20 @@
-# Imports
 import requests
 import json
 import random
 from dotenv import load_dotenv
 import os
 
-# Loading the .env file with keys and user_ids
 load_dotenv()
-
-# Tenor API KEY
 TENOR_API_KEY = os.getenv("TENOR_API_KEY")
-
-# Tenor client key
 TENOR_CKEY = os.getenv("TENOR_CKEY")
-
-# Steam API KEY
 API_KEY = os.getenv("STEAM_API_KEY")
 
-# List of Steam64 IDs of the players
 steam_ids_raw = os.getenv("STEAM_IDS")
 STEAM_IDS = steam_ids_raw.split(",") if steam_ids_raw else []
 
-# Cache file for storing common multiplayer games
 CACHE_FILE = "common_multiplayer_games.json"
 
 
-# Function to fetch games owned by a user
 def get_owned_games(steam_id):
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {
@@ -41,7 +30,6 @@ def get_owned_games(steam_id):
         return []
 
 
-# Function to check if a game supports multiplayer
 def is_multiplayer(game_id):
     url = f"https://store.steampowered.com/api/appdetails?appids={game_id}"
     response = requests.get(url)
@@ -53,19 +41,13 @@ def is_multiplayer(game_id):
     return False
 
 
-# Function to find and cache common multiplayer games
 def find_and_cache_common_multiplayer_games(steam_ids):
-    # Fetch games for all users
     user_games = []
     for steam_id in steam_ids:
         games = get_owned_games(steam_id)
         user_games.append({(game["appid"], game["name"]) for game in games})
-
-    # Find common games
     common_games = set.intersection(*user_games)
     print(f"Common games: {common_games}")
-
-    # Filter for multiplayer games
     multiplayer_games = []
     for game_id, game_name in common_games:
         if is_multiplayer(game_id):
@@ -73,12 +55,10 @@ def find_and_cache_common_multiplayer_games(steam_ids):
 
     # Save to cache
     with open(CACHE_FILE, "w") as f:
-        json.dump(multiplayer_games, f) # type: ignore
+        json.dump(multiplayer_games, f)
 
     return multiplayer_games
 
-
-# Function to load cached multiplayer games
 def load_cached_games():
     if os.path.exists(CACHE_FILE):
         with open(CACHE_FILE, "r") as f:
@@ -86,19 +66,14 @@ def load_cached_games():
     return None
 
 
-# Main function to select a random game
 def select_random_game(steam_ids):
-    # Load cached games if available
     cached_games = load_cached_games()
     if cached_games:
         print("Loaded games from cache.")
         multiplayer_games = cached_games
     else:
-        # Fetch and cache games if no cache exists
         print("No cache found. Fetching games from API...")
         multiplayer_games = find_and_cache_common_multiplayer_games(steam_ids)
-
-    # Select a random multiplayer game
     if multiplayer_games:
         select_game = random.choice(multiplayer_games)
         return select_game
@@ -107,23 +82,16 @@ def select_random_game(steam_ids):
 
 
 def tenor_gif_for_game(game_name):
-    # set the apikey and limit
-    apikey = TENOR_API_KEY  # click to set to your apikey
+    apikey = TENOR_API_KEY
     lmt = 1
-    ckey = TENOR_CKEY  # set the client_key for the integration and use the same value for all API calls
-
-    # our test search
+    ckey = TENOR_CKEY
     search_term = f"hop on {game_name}"
 
-    # get the top GIF for the search term
     r = requests.get(
         "https://tenor.googleapis.com/v2/search?q=%s&key=%s&client_key=%s&limit=%s" % (search_term, apikey, ckey, lmt))
-
     if r.status_code == 200:
-        # load the GIFs using the URLs for the smaller GIF sizes
         top_gifs = json.loads(r.content)
 
-        # Extract and print the 'gif' URL
         if "results" in top_gifs and len(top_gifs["results"]) > 0:
             gif_url = top_gifs["results"][0]["media_formats"]["gif"]["url"]
             print(gif_url)
