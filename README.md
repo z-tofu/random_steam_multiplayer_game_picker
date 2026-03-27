@@ -2,4 +2,4 @@
 ### Note
 Tenor API deprecates 2026
 
-MIT LICENCE — buh
+MIT LICENSE — buh
